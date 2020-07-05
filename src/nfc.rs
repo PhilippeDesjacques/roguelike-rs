@@ -1,5 +1,5 @@
 use crate::util::{Point, Contains};
-use crate::traits::{Updates};
+use crate::traits::{Updates, RenderingComponent};
 use crate::game::Game;
 use rand::{Rng, thread_rng};
 use crate::rendering::TcodRenderingComponent;
@@ -30,7 +30,7 @@ impl Updates for NFC {
         }
     }
 
-    fn render(&self, rendering_component: &mut TcodRenderingComponent) {
+    fn render(&self, rendering_component: &mut Box<RenderingComponent>) {
         rendering_component.render_object(&self.position, self.display_char);
     }
 }

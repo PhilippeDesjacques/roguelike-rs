@@ -2,6 +2,7 @@ use crate::util::{Point, Contains};
 use crate::game::Game;
 use tcod::input::KeyCode;
 use crate::rendering::TcodRenderingComponent;
+use crate::traits::RenderingComponent;
 
 pub struct Character {
     pub position: Point,
@@ -28,7 +29,7 @@ impl Character {
         }
     }
 
-    pub fn render(&self, rendering_component: &mut TcodRenderingComponent) {
+    pub fn render(&self, rendering_component: &mut Box<dyn RenderingComponent>) {
         rendering_component.render_object(&self.position, self.display_char);
     }
 }
