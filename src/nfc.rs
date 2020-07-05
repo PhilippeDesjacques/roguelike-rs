@@ -2,7 +2,6 @@ use crate::util::{Point, Contains};
 use crate::traits::{Updates, RenderingComponent};
 use crate::game::Game;
 use rand::{Rng, thread_rng};
-use crate::rendering::TcodRenderingComponent;
 
 pub struct NFC {
     pub position: Point,
@@ -30,7 +29,7 @@ impl Updates for NFC {
         }
     }
 
-    fn render(&self, rendering_component: &mut Box<RenderingComponent>) {
+    fn render(&self, rendering_component: &mut Box<dyn RenderingComponent>) {
         rendering_component.render_object(&self.position, self.display_char);
     }
 }

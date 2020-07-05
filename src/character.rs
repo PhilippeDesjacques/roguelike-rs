@@ -1,7 +1,6 @@
 use crate::util::{Point, Contains};
 use crate::game::Game;
 use tcod::input::KeyCode;
-use crate::rendering::TcodRenderingComponent;
 use crate::traits::RenderingComponent;
 
 pub struct Character {
