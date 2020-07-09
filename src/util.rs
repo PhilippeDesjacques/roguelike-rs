@@ -26,7 +26,7 @@ pub enum Contains {
     DoesNotContain
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Bound {
     pub min: Point,
     pub max: Point

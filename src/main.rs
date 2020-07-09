@@ -4,22 +4,26 @@ mod traits;
 mod character;
 mod nfc;
 mod rendering;
+mod movement;
 
 extern crate tcod;
 
 use tcod::input::KeyCode;
 use crate::util::{Point, Bound};
 use crate::game::Game;
-use crate::traits::Updates;
+use crate::traits::{Updates, MovementComponent};
 use crate::character::Character;
 use crate::nfc::NFC;
+use crate::movement::RandomMovementComponent;
 
 fn main() {
     let mut game = Game::new(Bound{min: Point{x: 0, y: 0}, max: Point{x: 79, y: 49}});
     let mut c = Character::new(40, 25, '@');
+    let cmc = Box::new(RandomMovementComponent::new(game.bound())) as Box<dyn MovementComponent>;
+    let dmc = Box::new(RandomMovementComponent::new(game.bound())) as Box<dyn MovementComponent>;
     let mut npcs: Vec<Box<dyn Updates>> = vec![
-        Box::new(NFC::new(10, 10, 'd')) as Box<dyn Updates>,
-        Box::new(NFC::new(40, 25, 'c')) as Box<dyn Updates>,
+        Box::new(NFC::new(10, 10, 'd', dmc)) as Box<dyn Updates>,
+        Box::new(NFC::new(40, 25, 'c', cmc)) as Box<dyn Updates>,
     ];
     game.render(&npcs, &c);
     while !(game.rendering_component.console().window_closed() || game.exit) {

@@ -30,11 +30,15 @@ impl Game {
     pub fn update(&mut self, npcs: &mut Vec<Box<dyn Updates>>, c: &mut Character, keypress: tcod::input::Key) {
         c.update(keypress, self);
         for i in npcs.iter_mut() {
-            i.update(self);
+            i.update();
         }
     }
 
     pub fn wait_for_keypress(&mut self) -> Key {
         self.rendering_component.wait_for_keypress()
+    }
+
+    pub fn bound(&self) -> &Bound {
+        &self.windows_bounds
     }
 }
