@@ -1,6 +1,7 @@
-use tcod::{RootConsole, Console, BackgroundFlag};
+use tcod::{RootConsole, Console, BackgroundFlag, TextAlignment};
 use crate::util::Point;
 use tcod::input::Key;
+use crate::window::WindowComponent;
 
 pub trait RenderingComponent {
     fn new(console: RootConsole) -> Self where Self: Sized;
@@ -9,6 +10,7 @@ pub trait RenderingComponent {
     fn after_render_new_frame(&mut self);
     fn wait_for_keypress(&mut self) -> Key;
     fn console(&self) -> &RootConsole;
+    fn attach_window(&mut self, window: &mut Box<dyn WindowComponent>);
 }
 
 pub struct TcodRenderingComponent {
@@ -38,5 +40,14 @@ impl RenderingComponent for TcodRenderingComponent {
 
     fn console(&self) -> &RootConsole {
         &self.console
+    }
+
+    fn attach_window(&mut self, window: &mut Box<dyn WindowComponent>) {
+        window.clear();
+        window.print_message(0, 0, TextAlignment::Left, "Sup foo!");
+        window.print_message(0, 1, TextAlignment::Left, "Nothin foo!");
+        let bounds = window.bounds();
+        let console = window.console();
+        tcod::console::blit(&*console, (0, 0), (bounds.width(), bounds.height()), &mut self.console, (bounds.min.x, bounds.min.y), 1f32, 1f32);
     }
 }

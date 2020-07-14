@@ -3,7 +3,7 @@ use crate::util::XPointRelation::{RightOfPoint, LeftOfPoint, OnPointX};
 use crate::util::YPointRelation::{AbovePoint, BelowPoint, OnPointY};
 use crate::util::PointEquality::{PointEqual, PointNotEqual};
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Copy, Debug)]
 pub struct Point {
     pub x: i32,
     pub y: i32
@@ -74,13 +74,29 @@ pub enum Contains {
     DoesNotContain
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Copy, Debug)]
 pub struct Bound {
     pub min: Point,
     pub max: Point
 }
 
 impl Bound {
+
+    pub fn new(min_x: i32, min_y: i32, max_x: i32, max_y: i32) -> Self {
+        Bound{
+            min: Point{x: min_x, y: min_y},
+            max: Point{x: max_x, y: max_y},
+        }
+    }
+
+    pub fn width(&self) -> i32 {
+        self.max.x - self.min.x + 1
+    }
+
+    pub fn height(&self) -> i32 {
+        self.max.y - self.min.y + 1
+    }
+
     pub fn contains(&self, point: Point) -> Contains {
         if
         point.x > self.min.x &&

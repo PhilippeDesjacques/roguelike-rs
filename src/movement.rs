@@ -7,7 +7,7 @@ use crate::util::YPointRelation::{AbovePoint, BelowPoint, OnPointY};
 use crate::util::PointEquality::{PointEqual, PointNotEqual};
 
 pub trait MovementComponent {
-    fn new(bound: &Bound) -> Self where Self: Sized;
+    fn new(bound: Bound) -> Self where Self: Sized;
     fn update(&self, point: Point, g: &Game) -> Point;
     fn set_key_pressed(&mut self, k: Option<Key>);
 }
@@ -18,7 +18,7 @@ pub struct RandomMovementComponent {
 }
 
 impl MovementComponent for RandomMovementComponent {
-    fn new(bound: &Bound) -> RandomMovementComponent {
+    fn new(bound: Bound) -> RandomMovementComponent {
         RandomMovementComponent{windows_bounds: bound.clone(), key_pressed: None}
     }
 
@@ -49,7 +49,7 @@ pub struct InputMovementComponent {
 }
 
 impl MovementComponent for InputMovementComponent {
-    fn new(bound: &Bound) -> InputMovementComponent {
+    fn new(bound: Bound) -> InputMovementComponent {
         InputMovementComponent{windows_bounds: bound.clone(), key_pressed: None}
     }
 
@@ -83,7 +83,7 @@ pub struct AggroMovementComponent {
 }
 
 impl MovementComponent for AggroMovementComponent {
-    fn new(bound: &Bound) -> AggroMovementComponent {
+    fn new(bound: Bound) -> AggroMovementComponent {
         AggroMovementComponent{windows_bounds: bound.clone(), key_pressed: None}
     }
 

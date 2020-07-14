@@ -23,22 +23,22 @@ impl Actor {
         rendering_component.render_object(&self.position, self.display_char);
     }
 
-    pub fn dog(x: i32, y: i32, bound: &Bound) -> Actor {
+    pub fn dog(x: i32, y: i32, bound: Bound) -> Actor {
         let mc = Box::new(RandomMovementComponent::new(bound)) as Box<dyn MovementComponent>;
         Actor::new(x, y, 'd', mc)
     }
 
-    pub fn cat(x: i32, y: i32, bound: &Bound) -> Actor {
+    pub fn cat(x: i32, y: i32, bound: Bound) -> Actor {
         let mc = Box::new(RandomMovementComponent::new(bound)) as Box<dyn MovementComponent>;
         Actor::new(x, y, 'c', mc)
     }
 
-    pub fn heroine(x: i32, y: i32, bound: &Bound) -> Actor {
+    pub fn heroine(x: i32, y: i32, bound: Bound) -> Actor {
         let mc = Box::new(InputMovementComponent::new(bound)) as Box<dyn MovementComponent>;
         Actor::new(x, y, '@', mc)
     }
 
-    pub fn kobold(x: i32, y: i32, bound: &Bound) -> Actor {
+    pub fn kobold(x: i32, y: i32, bound: Bound) -> Actor {
         let mc = Box::new(AggroMovementComponent::new(bound)) as Box<dyn MovementComponent>;
         Actor::new(x, y, 'K', mc)
     }
