@@ -1,7 +1,15 @@
 use tcod::{RootConsole, Console, BackgroundFlag};
 use crate::util::Point;
 use tcod::input::Key;
-use crate::traits::RenderingComponent;
+
+pub trait RenderingComponent {
+    fn new(console: RootConsole) -> Self where Self: Sized;
+    fn before_render_new_frame(&mut self);
+    fn render_object(&mut self, p: &Point, c: char);
+    fn after_render_new_frame(&mut self);
+    fn wait_for_keypress(&mut self) -> Key;
+    fn console(&self) -> &RootConsole;
+}
 
 pub struct TcodRenderingComponent {
     pub console: RootConsole

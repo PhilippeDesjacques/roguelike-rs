@@ -1,4 +1,7 @@
 use crate::util::Contains::{DoesNotContain, DoesContain};
+use crate::util::XPointRelation::{RightOfPoint, LeftOfPoint, OnPointX};
+use crate::util::YPointRelation::{AbovePoint, BelowPoint, OnPointY};
+use crate::util::PointEquality::{PointEqual, PointNotEqual};
 
 #[derive(Clone, Debug)]
 pub struct Point {
@@ -18,6 +21,51 @@ impl Point {
     pub fn offset(&self, offset: &Point) -> Point {
         Point{x: self.x + offset.x, y: self.y + offset.y}
     }
+
+    pub fn compare_x(&self, other: &Point) -> XPointRelation {
+        if self.x < other.x {
+            LeftOfPoint
+        } else if self.x > other.x {
+            RightOfPoint
+        } else {
+            OnPointX
+        }
+    }
+
+    pub fn compare_y(&self, other: &Point) -> YPointRelation {
+        if self.y < other.y {
+            BelowPoint
+        } else if self.y > other.y {
+            AbovePoint
+        } else {
+            OnPointY
+        }
+    }
+
+    pub fn compare(&self, other: &Point) -> PointEquality {
+        if self.x == other.x && self.y == other.y {
+            PointEqual
+        } else {
+            PointNotEqual
+        }
+    }
+}
+
+pub enum XPointRelation {
+    LeftOfPoint,
+    RightOfPoint,
+    OnPointX,
+}
+
+pub enum YPointRelation {
+    AbovePoint,
+    BelowPoint,
+    OnPointY,
+}
+
+pub enum PointEquality {
+    PointEqual,
+    PointNotEqual,
 }
 
 #[derive(Debug)]

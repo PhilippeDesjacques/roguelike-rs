@@ -1,7 +1,16 @@
 use crate::util::{Bound, Point, Contains};
-use crate::traits::MovementComponent;
 use rand::{thread_rng, Rng};
 use tcod::input::{Key, KeyCode};
+use crate::game::Game;
+use crate::util::XPointRelation::{RightOfPoint, LeftOfPoint, OnPointX};
+use crate::util::YPointRelation::{AbovePoint, BelowPoint, OnPointY};
+use crate::util::PointEquality::{PointEqual, PointNotEqual};
+
+pub trait MovementComponent {
+    fn new(bound: &Bound) -> Self where Self: Sized;
+    fn update(&self, point: Point, g: &Game) -> Point;
+    fn set_key_pressed(&mut self, k: Option<Key>);
+}
 
 pub struct RandomMovementComponent {
     pub windows_bounds: Bound,
@@ -13,7 +22,7 @@ impl MovementComponent for RandomMovementComponent {
         RandomMovementComponent{windows_bounds: bound.clone(), key_pressed: None}
     }
 
-    fn update(&self, point: Point) -> Point {
+    fn update(&self, point: Point, _g: &Game) -> Point {
         let mut offset = Point{x: point.x, y: point.y};
         let mut thr = thread_rng();
         let off_x = thr.gen_range(0, 3) - 1;
@@ -44,7 +53,7 @@ impl MovementComponent for InputMovementComponent {
         InputMovementComponent{windows_bounds: bound.clone(), key_pressed: None}
     }
 
-    fn update(&self, point: Point) -> Point {
+    fn update(&self, point: Point, _g: &Game) -> Point {
         let mut offset = Point{x: point.x, y: point.y};
         //let mut offset = Point{x: 0, y: 0};
         offset = match self.key_pressed {
@@ -60,6 +69,45 @@ impl MovementComponent for InputMovementComponent {
         match self.windows_bounds.contains(offset.clone()) {
             Contains::DoesContain => offset,
             Contains::DoesNotContain => point
+        }
+    }
+
+    fn set_key_pressed(&mut self, k: Option<Key>) {
+        self.key_pressed = k;
+    }
+}
+
+pub struct AggroMovementComponent {
+    pub windows_bounds: Bound,
+    pub key_pressed: Option<Key>,
+}
+
+impl MovementComponent for AggroMovementComponent {
+    fn new(bound: &Bound) -> AggroMovementComponent {
+        AggroMovementComponent{windows_bounds: bound.clone(), key_pressed: None}
+    }
+
+    fn update(&self, point: Point, g: &Game) -> Point {
+        let char_point = g.character_position();
+        let mut offset = Point{x: 0, y: 0};
+        match point.compare_x(char_point) {
+            RightOfPoint => offset = offset.offset_x(-1),
+            LeftOfPoint => offset = offset.offset_x(1),
+            OnPointX => {}
+        }
+        match point.compare_y(char_point) {
+            BelowPoint => offset = offset.offset_y(1),
+            AbovePoint => offset = offset.offset_y(-1),
+            OnPointY => {}
+        }
+        match point.offset(&offset).compare(char_point) {
+            PointEqual => point,
+            PointNotEqual => {
+                match self.windows_bounds.contains(point.offset(&offset)) {
+                    Contains::DoesContain => point.offset(&offset),
+                    Contains::DoesNotContain => point
+                }
+            }
         }
     }
 
