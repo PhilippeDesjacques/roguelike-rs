@@ -1,7 +1,6 @@
-use crate::util::{Point, Contains};
+use crate::util::Point;
 use crate::traits::{Updates, RenderingComponent, MovementComponent};
 use crate::game::Game;
-use rand::{Rng, thread_rng};
 
 pub struct NFC {
     pub position: Point,
@@ -16,18 +15,9 @@ impl NFC {
 }
 
 impl Updates for NFC {
-    fn update(&mut self) {
-        let mut thr = thread_rng();
-        let off_x = thr.gen_range(0, 3) - 1;
-        match self.movement_component.bound().contains(self.position.offset_x(off_x)) {
-            Contains::DoesContain => self.position = self.position.offset_x(off_x),
-            Contains::DoesNotContain => {}
-        }
-        let off_y = thr.gen_range(0, 3) - 1;
-        match self.movement_component.bound().contains(self.position.offset_y(off_y)) {
-            Contains::DoesContain => self.position = self.position.offset_y(off_y),
-            Contains::DoesNotContain => {}
-        }
+    fn update(&mut self, g: &Game) {
+        self.movement_component.set_key_pressed(g.last_key_pressed());
+        self.position = self.movement_component.update(self.position.clone());
     }
 
     fn render(&self, rendering_component: &mut Box<dyn RenderingComponent>) {

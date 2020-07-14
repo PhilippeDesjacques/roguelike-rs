@@ -1,31 +1,21 @@
-use crate::util::{Point, Contains};
+use crate::util::Point;
 use crate::game::Game;
-use tcod::input::KeyCode;
-use crate::traits::RenderingComponent;
+use crate::traits::{RenderingComponent, MovementComponent};
 
 pub struct Character {
     pub position: Point,
-    pub display_char: char
+    pub display_char: char,
+    pub movement_component: Box<dyn MovementComponent>,
 }
 
 impl Character {
-    pub fn new(x: i32, y: i32, dc: char) -> Character {
-        Character{position: Point{x, y}, display_char: dc}
+    pub fn new(x: i32, y: i32, dc: char, mc: Box<dyn MovementComponent>) -> Character {
+        Character{position: Point{x, y}, display_char: dc, movement_component: mc}
     }
 
-    pub fn update(&mut self, ks: tcod::input::Key, g: &Game) {
-        let mut offset = Point{x: 0, y: 0};
-        match ks.code {
-            KeyCode::Up => offset.y = -1,
-            KeyCode::Down => offset.y = 1,
-            KeyCode::Left => offset.x = -1,
-            KeyCode::Right => offset.x = 1,
-            _ => {}
-        }
-        match g.windows_bounds.contains(self.position.offset(&offset)) {
-            Contains::DoesContain => self.position = self.position.offset(&offset),
-            Contains::DoesNotContain => {}
-        }
+    pub fn update(&mut self, g: &Game) {
+        self.movement_component.set_key_pressed(g.last_key_pressed());
+        self.position = self.movement_component.update(self.position.clone());
     }
 
     pub fn render(&self, rendering_component: &mut Box<dyn RenderingComponent>) {

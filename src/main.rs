@@ -14,11 +14,12 @@ use crate::game::Game;
 use crate::traits::{Updates, MovementComponent};
 use crate::character::Character;
 use crate::nfc::NFC;
-use crate::movement::RandomMovementComponent;
+use crate::movement::{RandomMovementComponent, InputMovementComponent};
 
 fn main() {
     let mut game = Game::new(Bound{min: Point{x: 0, y: 0}, max: Point{x: 79, y: 49}});
-    let mut c = Character::new(40, 25, '@');
+    let pmc = Box::new(InputMovementComponent::new(game.bound())) as Box<dyn MovementComponent>;
+    let mut c = Character::new(40, 25, '@', pmc);
     let cmc = Box::new(RandomMovementComponent::new(game.bound())) as Box<dyn MovementComponent>;
     let dmc = Box::new(RandomMovementComponent::new(game.bound())) as Box<dyn MovementComponent>;
     let mut npcs: Vec<Box<dyn Updates>> = vec![
@@ -33,7 +34,7 @@ fn main() {
             KeyCode::Escape => game.exit = true,
             _ => {}
         }
-        game.update(&mut npcs, &mut c, key);
+        game.update(&mut npcs, &mut c);
         game.render(&npcs, &c);
     }
 }

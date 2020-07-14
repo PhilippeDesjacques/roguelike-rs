@@ -4,7 +4,7 @@ use tcod::input::Key;
 use tcod::RootConsole;
 
 pub trait Updates {
-    fn update(&mut self);
+    fn update(&mut self, g: &Game);
     fn render(&self, c: &mut Box<dyn RenderingComponent>);
 }
 
@@ -20,5 +20,5 @@ pub trait RenderingComponent {
 pub trait MovementComponent {
     fn new(bound: &Bound) -> Self where Self: Sized;
     fn update(&self, point: Point) -> Point;
-    fn bound(&self) -> &Bound;
+    fn set_key_pressed(&mut self, k: Option<Key>);
 }
