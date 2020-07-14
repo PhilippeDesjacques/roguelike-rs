@@ -45,23 +45,22 @@ impl MovementComponent for InputMovementComponent {
     }
 
     fn update(&self, point: Point) -> Point {
-        //let mut offset = Point{x: point.x, y: point.y};
-        let mut offset = Point{x: 0, y: 0};
-        match self.key_pressed {
+        let mut offset = Point{x: point.x, y: point.y};
+        //let mut offset = Point{x: 0, y: 0};
+        offset = match self.key_pressed {
             Some(a) => match a.code {
-                KeyCode::Up => offset.y = -1,
-                KeyCode::Down => offset.y = 1,
-                KeyCode::Left => offset.x = -1,
-                KeyCode::Right => offset.x = 1,
-                _ => {}
+                KeyCode::Up => offset.offset_y(-1),
+                KeyCode::Down => offset.offset_y(1),
+                KeyCode::Left => offset.offset_x(-1),
+                KeyCode::Right => offset.offset_x(1),
+                _ => offset
             },
-            _ => {}
+            None => offset
+        };
+        match self.windows_bounds.contains(offset.clone()) {
+            Contains::DoesContain => offset,
+            Contains::DoesNotContain => point
         }
-        match self.windows_bounds.contains(point.offset(&offset)) {
-            Contains::DoesContain => offset = point.offset(&offset),
-            Contains::DoesNotContain => {return point}
-        }
-        offset
     }
 
     fn set_key_pressed(&mut self, k: Option<Key>) {
