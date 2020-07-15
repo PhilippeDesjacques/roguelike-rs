@@ -40,7 +40,7 @@ impl Game {
             message_window: mw,
             map_window: maw,
             last_key_pressed: None,
-            character_position: Point{x: 0, y: 0}
+            character_position: Point{x: 0, y: 0},
         }
     }
 
@@ -67,6 +67,10 @@ impl Game {
 
     pub fn wait_for_keypress(&mut self) -> Key {
         let ks = self.rendering_component.wait_for_keypress();
+        match ks.printable {
+            '!' => self.input_window.buffer_message("Which direction would you like to attack with your heroic sword ? [press an arrow key]"),
+            _ => self.input_window.clear_buffer(),
+        }
         self.set_last_key_pressed(Some(ks));
         ks
     }

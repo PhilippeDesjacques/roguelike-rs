@@ -44,9 +44,15 @@ impl RenderingComponent for TcodRenderingComponent {
 
     fn attach_window(&mut self, window: &mut Box<dyn WindowComponent>) {
         window.clear();
-        window.print_message(0, 0, TextAlignment::Left, "Sup foo!");
-        window.print_message(0, 1, TextAlignment::Left, "Nothin foo!");
+        let mut line = 0;
         let bounds = window.bounds();
+        let messages = window.messages();
+
+        for message in messages.iter() {
+            window.print_message(0, line, TextAlignment::Left, (**message).as_str());
+            line = line + 1;
+        }
+
         let console = window.console();
         tcod::console::blit(&*console, (0, 0), (bounds.width(), bounds.height()), &mut self.console, (bounds.min.x, bounds.min.y), 1f32, 1f32);
     }
